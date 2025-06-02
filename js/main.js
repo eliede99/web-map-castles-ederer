@@ -1,84 +1,95 @@
+// Initialize map
 var map = L.map("map", {
   center: [47.5, 13.05],
   zoom: 8,
 });
 
+// Base map
 var osmap = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 
-var baseMaps = {
-  "Open Street Map": osmap,
-};
-
+// #scale bar
 L.control.scale({ position: "bottomright", imperial: false }).addTo(map);
 
+// Icon #
 var castleIcon = L.icon({
-  iconUrl: "css/images/castle.png",
+  iconUrl: "css/images/castle.png", // adjust path as needed
   iconSize: [32, 32],
   iconAnchor: [12, 12],
   popupAnchor: [0, -12],
 });
 
-var castles = L.geoJson(castlesJson, {
-  style: {
-    color: "#5a3d85",
-    weight: 2,
-    fillOpacity: 0.6,
-  },
+let allCastleFeatures = castlesJson.features;
 
-  onEachFeature: function (feature, layer) {
-    let props = feature.properties;
-    let castleType = "";
-    let wikiUrl = "";
-    let websiteUrl = "";
+let filteredCastleLayer = L.layerGroup().addTo(map);
 
-    if (props.castle_type) {
-      castleType = `Castle Type: ${props.castle_type}`;
+function updateCastleFilter() {
+  const checkedTypes = Array.from(document.querySelectorAll("#filter-controls input:checked")).map((input) => input.value);
+  filteredCastleLayer.clearLayers();
+
+  allCastleFeatures.forEach((feature) => {
+    if (checkedTypes.includes(feature.properties.castle_type)) {
+      let layer = L.geoJson(feature, {
+        pointToLayer: function (feature, latlng) {
+          return L.marker(latlng, { icon: castleIcon });
+        },
+        onEachFeature: function (feature, layer) {
+          let props = feature.properties;
+          let popupContent = `<b>${props.name}</b><br>Castle Type: ${props.castle_type}`;
+
+          if (props.wikipedia) {
+            let [, title] = props.wikipedia.split(":");
+            title = title.replace(/ /g, "_");
+            popupContent += `<br><a href="https://de.wikipedia.org/wiki/${title}" target="_blank">Wikipedia</a>`;
+          }
+
+          if (props.website) {
+            popupContent += `<br><a href="${props.website}" target="_blank">Website</a>`;
+          }
+
+          layer.bindPopup(popupContent);
+
+          // If polygon, add center marker
+          if (feature.geometry.type === "Polygon") {
+            let center = layer.getBounds().getCenter();
+            let marker = L.marker(center, { icon: castleIcon }).bindPopup(popupContent);
+            filteredCastleLayer.addLayer(marker);
+          }
+
+          layer.on({
+            mouseover: function (e) {
+              e.target.setStyle({
+                weight: 4,
+                color: "#333",
+                fillOpacity: 0.9,
+              });
+            },
+            mouseout: function (e) {
+              layer.setStyle({
+                color: "#5a3d85",
+                weight: 2,
+                fillOpacity: 0.6,
+              });
+            },
+            click: function (e) {
+              map.fitBounds(layer.getBounds());
+            },
+          });
+        },
+      });
+      filteredCastleLayer.addLayer(layer);
     }
+  });
+}
 
-    if (props.wikipedia) {
-      let [, title] = props.wikipedia.split(":");
-      title = title.replace(/ /g, "_");
-
-      wikiUrl = `<br><a href="https://de.wikipedia.org/wiki/${title}" target="_blank">Wikipedia</a>`;
-    }
-
-    if (props.website) {
-      websiteUrl = `<br><a href="${props.website}" target="_blank">Website</a>`;
-    }
-
-    let popupContent = "<b>" + props.name + "</b><br>" + castleType + wikiUrl + websiteUrl;
-
-    layer.bindPopup(popupContent);
-
-    if (feature.geometry.type === "Polygon") {
-      var center = layer.getBounds().getCenter();
-      var marker = L.marker(center, { icon: castleIcon }).addTo(map);
-      marker.bindPopup(popupContent);
-    }
-
-    layer.on({
-      mouseover: function (e) {
-        e.target.setStyle({
-          weight: 4,
-          color: "#333",
-          fillOpacity: 0.9,
-        });
-      },
-      mouseout: function (e) {
-        castles.resetStyle(e.target);
-      },
-      click: function (e) {
-        map.fitBounds(e.target.getBounds());
-      },
-    });
-  },
+// Listen for checkbox changes
+document.querySelectorAll("#filter-controls input").forEach((checkbox) => {
+  checkbox.addEventListener("change", updateCastleFilter);
 });
-castles.addTo(map);
 
-var features = {
-  Castles: castles,
-};
+// Layer control
+L.control.layers(null, { Castles: filteredCastleLayer }, { position: "topleft" }).addTo(map);
 
-L.control.layers(null, features, { position: "topleft" }).addTo(map);
+// Initial filter
+updateCastleFilter();
