@@ -27,6 +27,10 @@ h1 {
   width: 400px;
   height: 100px;
   background-color: rgb(78, 85, 80);
+  outline: 4px solid transparent;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: border 0.1s, background 0.1s;
 
   .left-div {
     height: 100%;
@@ -54,6 +58,15 @@ h1 {
       text-align: center;
     }
   }
+}
+
+.castles-types-cards:hover {
+  background-color: rgb(88, 97, 90);
+}
+
+/* Add border when checkbox inside is checked */
+.castles-types-cards:has(input:checked) {
+  outline-color: #398151;
 }
 
 #map {
