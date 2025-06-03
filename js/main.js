@@ -14,7 +14,7 @@ L.control.scale({ position: "bottomright", imperial: false }).addTo(map);
 
 // Icon #
 var castleIcon = L.icon({
-  iconUrl: "css/images/castle.png", // adjust path as needed
+  iconUrl: "css/images/marker.png", // adjust path as needed
   iconSize: [32, 32],
   iconAnchor: [12, 12],
   popupAnchor: [0, -12],
