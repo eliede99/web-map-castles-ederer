@@ -13,12 +13,6 @@ var osmap = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 L.control.scale({ position: "bottomright", imperial: false }).addTo(map);
 
 // Icon #
-var castleIcon = L.icon({
-  iconUrl: "css/images/marker.png", // adjust path as needed
-  iconSize: [32, 32],
-  iconAnchor: [12, 12],
-  popupAnchor: [0, -12],
-});
 
 let allCastleFeatures = castlesJson.features;
 
@@ -50,12 +44,16 @@ function updateCastleFilter() {
 
           layer.bindPopup(popupContent);
 
-          // If polygon, add center marker
-          if (feature.geometry.type === "Polygon") {
-            let center = layer.getBounds().getCenter();
-            let marker = L.marker(center, { icon: castleIcon }).bindPopup(popupContent);
-            filteredCastleLayer.addLayer(marker);
-          }
+          var castleIcon = L.icon({
+            iconUrl: `css/images/${props.castle_type}.png`,
+            iconSize: [32, 32],
+            iconAnchor: [12, 12],
+            popupAnchor: [0, -12],
+          });
+
+          let center = layer.getBounds().getCenter();
+          let marker = L.marker(center, { icon: castleIcon }).bindPopup(popupContent);
+          filteredCastleLayer.addLayer(marker);
 
           layer.on({
             mouseover: function (e) {
