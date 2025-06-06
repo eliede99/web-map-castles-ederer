@@ -66,8 +66,8 @@ document.querySelectorAll("#filter-controls input").forEach((checkbox) => {
   checkbox.addEventListener("change", updateCastleFilter);
 });
 
-// Layer control
-L.control.layers(null, { Castles: filteredCastleLayer }, { position: "topleft" }).addTo(map);
+// // Layer control
+// L.control.layers(null, { Castles: filteredCastleLayer }, { position: "topleft" }).addTo(map);
 
 // Initial filter
 updateCastleFilter();
