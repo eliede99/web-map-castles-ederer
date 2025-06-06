@@ -2,8 +2,10 @@ body {
   width: 100%;
   height: 100%;
   font-family: "Helvetica Neue", Arial, Helveticam sans-serif;
-  background-color: rgb(175, 151, 123);
+  background-color: rgb(185, 160, 132);
   color: rgb(0, 0, 0);
+  font-family: "Oldenburg", serif;
+  color: #530300;
 }
 
 h1 {
@@ -11,6 +13,10 @@ h1 {
   display: flex;
   justify-content: center;
   z-index: 2;
+  font-family: "Eagle Lake", serif;
+  font-weight: 700;
+  /* text-decoration: underline solid #9c2420 4px;
+  text-underline-offset: 8px; */
 }
 
 #filter-controls {
@@ -19,14 +25,13 @@ h1 {
   justify-content: center;
   gap: 20px;
   margin-top: 10px;
-  margin-bottom: 25px;
 }
 
 .castles-types-cards {
   display: flex;
-  width: 400px;
+  width: 20vw;
   height: 100px;
-  background-color: rgb(214, 195, 158);
+  background-color: rgb(241, 227, 180);
   outline: 4px solid transparent;
   cursor: pointer;
   border-radius: 5px;
@@ -60,21 +65,27 @@ h1 {
   }
 }
 
-.castles-types-cards:hover {
-  background-color: rgb(223, 204, 166);
-}
-
 /* Add border when checkbox inside is checked */
 .castles-types-cards:has(input:checked) {
-  outline-color: #9c2420;
+  outline-color: #831915;
   /* background-color: rgb(201, 180, 142); */
 }
 
+#info-p {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
 #map {
-  height: 98%;
+  height: 76vh;
   width: 98vw;
   left: 1%;
   overflow: hidden;
   position: fixed;
-  border: 1px #444 solid;
+  border: 4px #831915 solid;
+  border-radius: 5px;
 }

@@ -10,9 +10,7 @@ var osmap = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 // #scale bar
-L.control.scale({ position: "bottomright", imperial: false }).addTo(map);
-
-// Icon #
+L.control.scale({ position: "topleft", imperial: false }).addTo(map);
 
 let allCastleFeatures = castlesJson.features;
 
@@ -28,6 +26,7 @@ function updateCastleFilter() {
         pointToLayer: function (feature, latlng) {
           return L.marker(latlng, { icon: castleIcon });
         },
+        // dynamic pop up content
         onEachFeature: function (feature, layer) {
           let props = feature.properties;
           let popupContent = `<b>${props.name}</b><br>Castle Type: ${props.castle_type}`;
@@ -44,6 +43,7 @@ function updateCastleFilter() {
 
           layer.bindPopup(popupContent);
 
+          //dynamic castle icon
           var castleIcon = L.icon({
             iconUrl: `css/images/${props.castle_type}.png`,
             iconSize: [32, 32],
@@ -54,26 +54,6 @@ function updateCastleFilter() {
           let center = layer.getBounds().getCenter();
           let marker = L.marker(center, { icon: castleIcon }).bindPopup(popupContent);
           filteredCastleLayer.addLayer(marker);
-
-          layer.on({
-            mouseover: function (e) {
-              e.target.setStyle({
-                weight: 4,
-                color: "#333",
-                fillOpacity: 0.9,
-              });
-            },
-            mouseout: function (e) {
-              layer.setStyle({
-                color: "#5a3d85",
-                weight: 2,
-                fillOpacity: 0.6,
-              });
-            },
-            click: function (e) {
-              map.fitBounds(layer.getBounds());
-            },
-          });
         },
       });
       filteredCastleLayer.addLayer(layer);
